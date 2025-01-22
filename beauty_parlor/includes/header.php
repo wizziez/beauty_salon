@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +16,7 @@ session_start();
     <header>
         <nav>
             <ul>
-                <li><a href="index.php">Home</a></li>
+                <li><a href="home.php">Home</a></li>
                 <li><a href="about_us.php">About Us</a></li>
                 <li><a href="services.php">Services</a></li>
                 <li><a href="staff.php">Staff</a></li>

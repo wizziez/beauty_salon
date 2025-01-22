@@ -30,6 +30,9 @@ $result = $conn->query($sql);
     <div class="content">
         <div class="container">
             <h1>Our Services</h1>
+            <div class="search-bar">
+                <input type="text" placeholder="Search services..." id="search" onkeyup="filterServices()">
+            </div>
             <div class="filter-bar">
                 <button class="filter-btn" onclick="filterServices('all')">All</button>
                 <button class="filter-btn" onclick="filterServices('Body Care')">Body Care</button>
@@ -43,10 +46,11 @@ $result = $conn->query($sql);
                 <?php
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        echo '<div class="service-card" data-category="' . $row["sname"] . '">';
+                        echo '<div class="service-card" data-category="' . $row["category"] . '">';
                         echo '<h3>' . $row["sname"] . '</h3>';
-                        echo '<p>Price: $' . $row["sprice"] . '</p>';
+                        echo '<p>Price: ' . $row["sprice"] . ' BDT</p>';
                         echo '<p>Duration: ' . $row["sduration"] . '</p>';
+                        echo '<a href="book_appointment.php" class="btn">Book Appointment</a>';
                         echo '</div>';
                     }
                 } else {
@@ -59,9 +63,11 @@ $result = $conn->query($sql);
 
     <script>
         function filterServices(category) {
+            const searchInput = document.getElementById('search').value.toLowerCase();
             const cards = document.querySelectorAll('.service-card');
             cards.forEach(card => {
-                if (category === 'all' || card.getAttribute('data-category') === category) {
+                const serviceName = card.querySelector('h3').innerText.toLowerCase();
+                if ((category === 'all' || card.getAttribute('data-category') === category) && serviceName.includes(searchInput)) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';

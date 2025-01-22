@@ -1,3 +1,4 @@
+
 <?php include 'includes/header.php'; ?>
 <?php include 'includes/db_connect.php'; ?>
 
@@ -20,17 +21,29 @@
                     $row = $result->fetch_assoc();
                     $cust_id = $row['cust_id'];
 
-                    $sql = "SELECT * FROM appointment_details WHERE cust_id='$cust_id'";
+                    $sql = "SELECT a.app_id, a.app_date, ad.total_bill, ad.status, s.sname, s.sprice, st.staff_name 
+                            FROM appointment a
+                            JOIN appointment_details ad ON a.app_id = ad.app_id
+                            JOIN appointment_services aps ON a.app_id = aps.app_id
+                            JOIN services s ON aps.sid = s.sid
+                            JOIN staff st ON aps.staff_id = st.staff_id
+                            WHERE a.cust_id = '$cust_id'";
                     $result = $conn->query($sql);
 
                     if ($result->num_rows > 0) {
                         while($row = $result->fetch_assoc()) {
-                            echo "<li>Appointment ID: {$row['app_id']}, Date: {$row['app_date']}, Total Bill: {$row['total_bill']} BDT, Status: {$row['status']} 
-                            <form method='POST' action='history.php'>
-                                <input type='hidden' name='app_id' value='{$row['app_id']}'>
-                                <button type='submit' name='cancel'>Cancel Appointment</button>
-                            </form>
-                            </li>";
+                            echo "<li>
+                                    <strong>Appointment ID:</strong> {$row['app_id']}<br>
+                                    <strong>Date:</strong> {$row['app_date']}<br>
+                                    <strong>Service:</strong> {$row['sname']} ({$row['sprice']} BDT)<br>
+                                    <strong>Staff:</strong> {$row['staff_name']}<br>
+                                    <strong>Total Bill:</strong> {$row['total_bill']} BDT<br>
+                                    <strong>Status:</strong> {$row['status']}<br>
+                                    <form method='POST' action='history.php'>
+                                        <input type='hidden' name='app_id' value='{$row['app_id']}'>
+                                        <button type='submit' name='cancel'>Cancel Appointment</button>
+                                    </form>
+                                  </li>";
                         }
                     } else {
                         echo "<li>No appointment history found</li>";

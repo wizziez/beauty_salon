@@ -38,16 +38,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result_admin->num_rows > 0) {
         $_SESSION['user_type'] = 'admin';
         $_SESSION['user_id'] = $result_admin->fetch_assoc()['admin_id'];
-        header("Location: admin_dashboard.php");
+        header("Location: home.php");
         exit();
     }
 
     // Check customer table
     $result_customer = $conn->query($sql_customer);
     if ($result_customer->num_rows > 0) {
+        $customer = $result_customer->fetch_assoc();
         $_SESSION['user_type'] = 'customer';
-        $_SESSION['user_id'] = $result_customer->fetch_assoc()['cust_id'];
-        header("Location: customer_homepage.php");
+        $_SESSION['user_id'] = $customer['cust_id'];
+        $_SESSION['user_name'] = $customer['cust_name'];
+        $_SESSION['user_phone'] = $customer['cust_phone'];
+        $_SESSION['user_email'] = $customer['cust_mail'];
+        header("Location: home.php");
         exit();
     }
 
@@ -57,13 +61,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $staff = $result_staff->fetch_assoc();
         $_SESSION['user_type'] = 'staff';
         $_SESSION['user_id'] = $staff['staff_id'];
+        $_SESSION['user_name'] = $staff['staff_name'];
+        $_SESSION['user_phone'] = $staff['staff_phone'];
+        $_SESSION['user_email'] = $staff['staff_mail'];
 
         // Redirect based on staff designation
-        if ($staff['staff_role'] == 'Receptionist') {
-            header("Location: receptionist_dashboard.php");
-        } else {
-            header("Location: staff_dashboard.php");
-        }
+        header("Location: home.php");
         exit();
     }
 
